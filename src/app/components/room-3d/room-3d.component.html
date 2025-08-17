@@ -1,0 +1,121 @@
+<div class="room-3d-container">
+  <!-- Three.js Canvas -->
+  <canvas #canvas class="three-canvas-container"></canvas>
+  
+  <!-- UI Overlay -->
+  <div class="ui-overlay">
+    
+    <!-- Top HUD -->
+    <div class="hud-top">
+      <div class="hud-element">
+        <span class="label">FPS</span>
+        <span class="value">{{ fps }}</span>
+      </div>
+      <div class="hud-element">
+        <span class="label">Active Tasks</span>
+        <span class="value">{{ tasks.length }}</span>
+      </div>
+      <div class="hud-element">
+        <span class="label">Portfolio YTD</span>
+        <span class="value">$2.4M</span>
+      </div>
+      <div class="hud-element">
+        <span class="label">Time</span>
+        <span class="value">{{ getCurrentTime() }}</span>
+      </div>
+    </div>
+    
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <button [class.active]="currentView === 'overview'" (click)="switchView('overview')">
+        Overview
+      </button>
+      <button [class.active]="currentView === 'desk'" (click)="switchView('desk')">
+        Desk View
+      </button>
+      <button [class.active]="currentView === 'monitors'" (click)="switchView('monitors')">
+        Monitors
+      </button>
+      <button [class.active]="currentView === 'globe'" (click)="switchView('globe')">
+        Globe View
+      </button>
+      <button (click)="toggleVoiceAssistant()">
+        AI Assistant
+      </button>
+    </div>
+    
+    <!-- Voice Assistant Panel -->
+    <div class="voice-assistant" *ngIf="showVoiceAssistant">
+      <div class="assistant-header">
+        <div class="assistant-avatar" [class.listening]="isListening">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div style="flex: 1;">
+          <div class="assistant-name">ARIA - AI Assistant & Secretary</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.6)">Insurance Expert • Note Taker • Meeting Scheduler</div>
+        </div>
+        <button class="icon-button" (click)="clearChat()" title="Clear chat">
+          🗑️
+        </button>
+        <button class="icon-button" (click)="stopSpeaking()" title="Stop speaking">
+          🔇
+        </button>
+        <button class="close-button" (click)="toggleVoiceAssistant()" title="Close">
+          ✕
+        </button>
+      </div>
+      
+      <div class="assistant-messages">
+        <div *ngFor="let msg of voiceMessages" class="message" [class.ai]="msg.type === 'ai'" [class.user]="msg.type === 'user'">
+          {{ msg.text }}
+        </div>
+        <div *ngIf="voiceMessages.length === 0" class="message ai">
+          Hello! I'm ARIA, your AI assistant and secretary. I can help with insurance expertise, take notes, schedule meetings, and manage your tasks. How can I assist you today?
+        </div>
+      </div>
+      
+      <div class="assistant-input">
+        <input 
+          type="text" 
+          placeholder="Ask me anything about insurance..."
+          (keyup.enter)="sendVoiceMessage(input.value); input.value = ''"
+          #input
+        >
+        <button 
+          class="voice-button" 
+          [class.active]="isListening"
+          (click)="toggleVoiceInput()"
+          title="Click to speak">
+          🎤
+        </button>
+        <button (click)="sendVoiceMessage(input.value); input.value = ''">
+          Send
+        </button>
+      </div>
+    </div>
+    
+    <!-- Secretary Notes (Initially Hidden) -->
+    <div class="secretary-notes" *ngIf="false">
+      <div class="notes-header">
+        <h3>Secretary Notes</h3>
+      </div>
+      <div class="notes-content">
+        <div class="note-item">
+          <span class="note-time">10:30 AM</span>
+          <span class="note-text">Meeting with Knight-Swift Transportation</span>
+        </div>
+        <div class="note-item">
+          <span class="note-time">2:00 PM</span>
+          <span class="note-text">Review Disney Company renewal</span>
+        </div>
+        <div class="note-item">
+          <span class="note-time">3:30 PM</span>
+          <span class="note-text">Risk assessment for MUJI Hong Kong</span>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
